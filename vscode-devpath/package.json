@@ -1,0 +1,95 @@
+{
+  "name": "devpath-code-review",
+  "displayName": "DevPath Code Review",
+  "description": "Анализ открытого файла через DevPath (Sonar + AI), без сохранения в БД",
+  "version": "0.1.0",
+  "publisher": "devpath",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Linters", "Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "DevPath",
+      "properties": {
+        "devpath.apiUrl": {
+          "type": "string",
+          "default": "https://localhost:8089",
+          "description": "URL DevPath (без слэша в конце)"
+        },
+        "devpath.allowInsecureTls": {
+          "type": "boolean",
+          "default": true,
+          "description": "Разрешить самоподписанный HTTPS (локальная разработка)"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "devpath.analyzeFile",
+        "title": "DevPath: Проверить текущий файл",
+        "icon": {
+          "light": "media/icon-light.svg",
+          "dark": "media/icon-dark.svg"
+        }
+      },
+      {
+        "command": "devpath.openPanel",
+        "title": "DevPath: Открыть панель разбора",
+        "icon": {
+          "light": "media/icon-light.svg",
+          "dark": "media/icon-dark.svg"
+        }
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "devpath.analyzeFile",
+        "key": "ctrl+alt+d",
+        "when": "editorTextFocus"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devpath-sidebar",
+          "title": "DevPath",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "devpath-sidebar": [
+        {
+          "type": "webview",
+          "id": "devpath.reviewView",
+          "name": "Разбор кода"
+        }
+      ]
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "devpath.analyzeFile",
+          "group": "navigation@100"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "devpath.analyzeFile",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "devpath.analyzeFile",
+          "when": "view == devpath.reviewView",
+          "group": "navigation"
+        }
+      ]
+    }
+  }
+}

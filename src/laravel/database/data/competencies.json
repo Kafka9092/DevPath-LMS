@@ -1,0 +1,316 @@
+{
+    "competencies": [
+        {
+            "name": "Синтаксис",
+            "category": "syntax",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Переменные",
+            "category": "syntax",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Типы данных",
+            "category": "syntax",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Условия (if/else)",
+            "category": "control_flow",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Циклы (for/while)",
+            "category": "control_flow",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Функции (базовые)",
+            "category": "functions",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Массивы (базовые)",
+            "category": "data_structures",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Строки (базовые)",
+            "category": "data_structures",
+            "beginner_level": true,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Git (commit/push/pull)",
+            "category": "tools",
+            "beginner_level": false,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Исключения (try-catch)",
+            "category": "error_handling",
+            "beginner_level": false,
+            "junior_level": true,
+            "middle_level": false,
+            "senior_level": false
+        },
+        {
+            "name": "Классы и объекты",
+            "category": "oop",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Конструктор и деструктор",
+            "category": "oop",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Наследование",
+            "category": "oop",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Инкапсуляция (public/private/protected)",
+            "category": "oop",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Полиморфизм",
+            "category": "oop",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Интерфейсы",
+            "category": "oop",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Абстрактные классы",
+            "category": "oop",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Работа с файлами",
+            "category": "io",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Базы данных (SQL)",
+            "category": "database",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "HTTP и API",
+            "category": "api",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Замыкания",
+            "category": "functions",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Юнит-тестирование",
+            "category": "testing",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Паттерн Singleton",
+            "category": "patterns",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Паттерн Factory",
+            "category": "patterns",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Паттерн Strategy",
+            "category": "patterns",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Паттерн Observer",
+            "category": "patterns",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": true,
+            "senior_level": false
+        },
+        {
+            "name": "Принципы SOLID",
+            "category": "architecture",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Чистая архитектура",
+            "category": "architecture",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Микросервисы",
+            "category": "architecture",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Продвинутые паттерны",
+            "category": "patterns",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Оптимизация производительности",
+            "category": "performance",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Кеширование (Redis)",
+            "category": "performance",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Асинхронность и многопоточность",
+            "category": "concurrency",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Безопасность (XSS, SQLi, JWT)",
+            "category": "security",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "CI/CD (GitHub Actions, GitLab CI)",
+            "category": "devops",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Docker и контейнеризация",
+            "category": "devops",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Мониторинг и логирование",
+            "category": "devops",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Распределённые транзакции",
+            "category": "architecture",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        },
+        {
+            "name": "Консистентность и репликация",
+            "category": "database",
+            "beginner_level": false,
+            "junior_level": false,
+            "middle_level": false,
+            "senior_level": true
+        }
+    ]
+}

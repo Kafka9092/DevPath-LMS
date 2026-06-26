@@ -1,0 +1,53 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "check:jsx": "node scripts/check-jsx.mjs"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.3.0",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "@types/diff": "^7.0.2",
+        "@vitejs/plugin-react": "^4.2.0",
+        "autoprefixer": "^10.5.0",
+        "axios": "^1.6.4",
+        "laravel-vite-plugin": "^1.0.0",
+        "postcss": "^8.5.15",
+        "sass-embedded": "^1.98.0",
+        "tailwindcss": "4.3.0",
+        "vite": "^5.4.21"
+    },
+    "dependencies": {
+        "@headlessui/react": "^2.2.10",
+        "@heroicons/react": "^2.2.0",
+        "@inertiajs/react": "^2.3.18",
+        "@marsidev/react-turnstile": "^1.1.0",
+        "@monaco-editor/react": "^4.7.0",
+        "@radix-ui/react-avatar": "^1.1.11",
+        "@radix-ui/react-dialog": "^1.1.15",
+        "@radix-ui/react-dropdown-menu": "^2.1.16",
+        "@radix-ui/react-label": "^2.1.8",
+        "@radix-ui/react-primitive": "^2.1.4",
+        "@radix-ui/react-progress": "^1.1.8",
+        "@radix-ui/react-scroll-area": "^1.2.10",
+        "@radix-ui/react-select": "^2.2.6",
+        "@radix-ui/react-separator": "^1.1.8",
+        "@radix-ui/react-slot": "^1.2.4",
+        "@radix-ui/react-switch": "^1.2.6",
+        "@radix-ui/react-tabs": "^1.1.13",
+        "bootstrap": "^5.3.8",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "diff": "^7.0.0",
+        "framer-motion": "^12.40.0",
+        "lucide-react": "^1.7.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "tailwind-merge": "^3.5.0",
+        "typescript": "^6.0.2",
+        "vite-tsconfig-paths": "^6.1.1"
+    }
+}

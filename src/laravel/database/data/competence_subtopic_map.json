@@ -1,0 +1,68 @@
+{
+    "rules": [
+        {
+            "competence": "Синтаксис",
+            "subtopic_keywords": ["синтаксис", "hello world", "компиляц", "интерпрет", "среда исполн", "окружен"]
+        },
+        {
+            "competence": "Переменные",
+            "subtopic_keywords": ["переменн", "констант", "тип"]
+        },
+        {
+            "competence": "Типы данных",
+            "subtopic_keywords": ["тип", "примитив", "приведен", "преобразован", "логический тип", "строковый тип"]
+        },
+        {
+            "competence": "Условия (if/else)",
+            "subtopic_keywords": ["услов", "if/else", "if-else", "switch", "match", "тернар", "логическ"]
+        },
+        {
+            "competence": "Циклы (for/while)",
+            "subtopic_keywords": ["цикл", "for", "while", "итерац", "break", "continue", "вложенн"]
+        },
+        {
+            "competence": "Функции (базовые)",
+            "subtopic_keywords": ["функц", "рекурс", "параметр", "аргумент", "сигнатур", "return", "возвращ"]
+        },
+        {
+            "competence": "Массивы (базовые)",
+            "subtopic_keywords": ["массив", "списк", "slice", "коллекц", "контейнер", "итератор"]
+        },
+        {
+            "competence": "Строки (базовые)",
+            "subtopic_keywords": ["строк", "string", "кодиров", "формат"]
+        },
+        {
+            "competence": "Исключения (try-catch)",
+            "subtopic_keywords": ["исключен", "try-catch", "try/catch", "error", "finally", "throw"]
+        },
+        {
+            "competence": "Классы и объекты",
+            "subtopic_keywords": ["класс", "объект", "ооп", "инкапсул", "конструктор", "геттер", "сеттер", "статическ"]
+        },
+        {
+            "competence": "Наследование",
+            "subtopic_keywords": ["наслед", "полиморф", "переопредел", "абстрактн", "virtual", "override"]
+        },
+        {
+            "competence": "Интерфейсы",
+            "subtopic_keywords": ["интерфейс", "trait", "protocol", "implement"]
+        },
+        {
+            "competence": "Git (commit/push/pull)",
+            "subtopic_keywords": ["git", "commit", "версион", "репозитор"]
+        },
+        {
+            "competence": "HTTP/REST",
+            "subtopic_keywords": ["http", "rest", "api", "запрос", "endpoint"]
+        },
+        {
+            "competence": "SQL (SELECT/JOIN)",
+            "subtopic_keywords": ["sql", "select", "join", "запрос к баз"]
+        },
+        {
+            "competence": "Горутины / async",
+            "subtopic_keywords": ["горутин", "concurrent", "async", "await", "параллел", "конкурен"]
+        }
+    ]
+}

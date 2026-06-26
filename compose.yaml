@@ -1,0 +1,492 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    environment:
+    - OLLAMA_HOST=0.0.0.0:11434
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              count: all
+              driver: nvidia
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - laravel-network
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_ORIGINS=*
+    volumes:
+      - open-webui_data:/app/backend/data
+    networks:
+      - laravel-network
+    depends_on:
+      - ollama
+
+  nginx:
+    image: nginx:alpine
+    container_name: hr-nginx
+    restart: unless-stopped
+    ports:
+      - "11436:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - laravel-network
+    depends_on:
+      - ollama
+
+  app-nginx:
+    image: nginx:alpine
+    container_name: hr-app-nginx
+    restart: unless-stopped
+    ports:
+      - "8089:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs/server-cert.pem:/etc/ssl/certs/server-cert.pem:ro
+      - ./nginx/private/server-key.pem:/etc/ssl/private/server-key.pem:ro
+    networks:
+      - laravel-network
+    depends_on:
+      - php
+
+  php:
+    build: ./php/
+    container_name: hr-php
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    depends_on:
+      app_postgres:
+        condition: service_started
+      mailserver:
+        condition: service_started
+      ollama:
+        condition: service_started
+      nginx:
+        condition: service_started
+      kafka:
+        condition: service_started
+    user: "1000:1000"
+    volumes:
+      - ./src/laravel/:/var/www/html/laravel/:rw
+      - shared_code:/shared
+    working_dir: /var/www/html/laravel/
+    environment:
+      HOME: /var/www/html/laravel
+      NPM_CONFIG_CACHE: /var/www/html/laravel/.npm-cache
+      OLLAMA_HOST: http://nginx:80
+      OLLAMA_MODEL: gemma4:31b-cloud
+      SONAR_HOST: http://sonarqube:9000
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_TEST_ASYNC: "true"
+      KAFKA_TEST_ASYNC_START: "true"
+      KAFKA_TEST_ASYNC_NEXT: "true"
+      KAFKA_TEST_ASYNC_FINISH: "true"
+      KAFKA_TEST_START_TOPIC: adaptive.test.start
+      KAFKA_TEST_NEXT_TOPIC: adaptive.test.next-question
+      KAFKA_TEST_FINISH_TOPIC: adaptive.test.finish
+      KAFKA_TEST_CONSUMER_GROUP: adaptive.test
+      KAFKA_LESSON_ASYNC: "true"
+      KAFKA_LESSON_ASYNC_CONTENT: "true"
+      KAFKA_LESSON_ASYNC_CHAT: "true"
+      KAFKA_LESSON_ASYNC_REVIEW: "true"
+      KAFKA_LESSON_CONTENT_TOPIC: lesson.content.generate
+      KAFKA_LESSON_CHAT_TOPIC: lesson.mentor.chat
+      KAFKA_LESSON_REVIEW_TOPIC: lesson.practice.review
+      KAFKA_LESSON_CONSUMER_GROUP: lesson.workers
+      KAFKA_CODE_REVIEW_ASYNC: "true"
+      KAFKA_CODE_REVIEW_ASYNC_ANALYZE: "true"
+      KAFKA_CODE_REVIEW_TOPIC: chat.code-review.analyze
+      KAFKA_HR_INTERVIEW_ASYNC: "true"
+      KAFKA_HR_INTERVIEW_ASYNC_REPLY: "true"
+      KAFKA_HR_INTERVIEW_ASYNC_CODE: "true"
+      KAFKA_HR_INTERVIEW_TOPIC: chat.hr-interview.chat
+      KAFKA_CODE_REVIEW_CONSUMER_GROUP: chat.code-review
+      KAFKA_HR_INTERVIEW_CONSUMER_GROUP: chat.hr-interview
+      HR_CONDUCT_ENABLED: "true"
+      SENIOR_PROGRAM_CARD_ENABLED: "true"
+      ADAPTIVE_TEST_CONTINUE_BAR_ENABLED: "true"
+      LESSON_LENIENT_REVIEW: "false"
+      CACHE_STORE: database
+    networks:
+      - laravel-network
+
+  kafka-cat-consumer:
+    build: ./php/
+    container_name: hr-kafka-cat-consumer
+    command: php artisan kafka:cat-test-consume
+    restart: unless-stopped
+    depends_on:
+      - app_postgres
+      - ollama
+      - nginx
+      - kafka
+    user: "1000:1000"
+    volumes:
+      - ./src/laravel/:/var/www/html/laravel/:rw
+    working_dir: /var/www/html/laravel/
+    environment:
+      OLLAMA_HOST: http://nginx:80
+      OLLAMA_MODEL: gemma4:31b-cloud
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_TEST_ASYNC: "true"
+      KAFKA_TEST_ASYNC_START: "true"
+      KAFKA_TEST_ASYNC_NEXT: "true"
+      KAFKA_TEST_ASYNC_FINISH: "true"
+      KAFKA_TEST_START_TOPIC: adaptive.test.start
+      KAFKA_TEST_NEXT_TOPIC: adaptive.test.next-question
+      KAFKA_TEST_FINISH_TOPIC: adaptive.test.finish
+      KAFKA_TEST_CONSUMER_GROUP: adaptive.test
+      CACHE_STORE: database
+    networks:
+      - laravel-network
+
+  kafka-lesson-consumer:
+    build: ./php/
+    container_name: hr-kafka-lesson-consumer
+    command: php artisan kafka:lesson-consume
+    restart: unless-stopped
+    depends_on:
+      - app_postgres
+      - ollama
+      - nginx
+      - kafka
+      - sonarqube
+      - sonar-scanner
+    user: "1000:1000"
+    volumes:
+      - ./src/laravel/:/var/www/html/laravel/:rw
+    working_dir: /var/www/html/laravel/
+    environment:
+      OLLAMA_HOST: http://nginx:80
+      OLLAMA_MODEL: gemma4:31b-cloud
+      SONAR_HOST: http://sonarqube:9000
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_LESSON_ASYNC: "true"
+      KAFKA_LESSON_ASYNC_CONTENT: "true"
+      KAFKA_LESSON_ASYNC_CHAT: "true"
+      KAFKA_LESSON_ASYNC_REVIEW: "true"
+      KAFKA_LESSON_CONTENT_TOPIC: lesson.content.generate
+      KAFKA_LESSON_CHAT_TOPIC: lesson.mentor.chat
+      KAFKA_LESSON_REVIEW_TOPIC: lesson.practice.review
+      KAFKA_LESSON_CONSUMER_GROUP: lesson.workers
+      CACHE_STORE: database
+    networks:
+      - laravel-network
+
+  kafka-code-review-consumer:
+    build: ./php/
+    container_name: hr-kafka-code-review-consumer
+    command: php artisan kafka:code-review-consume
+    restart: unless-stopped
+    depends_on:
+      - app_postgres
+      - ollama
+      - nginx
+      - kafka
+      - sonarqube
+      - sonar-scanner
+    user: "1000:1000"
+    volumes:
+      - ./src/laravel/:/var/www/html/laravel/:rw
+    working_dir: /var/www/html/laravel/
+    environment:
+      OLLAMA_HOST: http://nginx:80
+      OLLAMA_MODEL: gemma4:31b-cloud
+      SONAR_HOST: http://sonarqube:9000
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CODE_REVIEW_ASYNC: "true"
+      KAFKA_CODE_REVIEW_ASYNC_ANALYZE: "true"
+      KAFKA_CODE_REVIEW_TOPIC: chat.code-review.analyze
+      KAFKA_CODE_REVIEW_CONSUMER_GROUP: chat.code-review
+      CACHE_STORE: database
+    networks:
+      - laravel-network
+
+  kafka-hr-interview-consumer:
+    build: ./php/
+    container_name: hr-kafka-hr-interview-consumer
+    command: php artisan kafka:hr-interview-consume
+    restart: unless-stopped
+    depends_on:
+      - app_postgres
+      - ollama
+      - nginx
+      - kafka
+      - sonarqube
+      - sonar-scanner
+    user: "1000:1000"
+    volumes:
+      - ./src/laravel/:/var/www/html/laravel/:rw
+    working_dir: /var/www/html/laravel/
+    environment:
+      OLLAMA_HOST: http://nginx:80
+      OLLAMA_MODEL: gemma4:31b-cloud
+      SONAR_HOST: http://sonarqube:9000
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_HR_INTERVIEW_ASYNC: "true"
+      KAFKA_HR_INTERVIEW_ASYNC_REPLY: "true"
+      KAFKA_HR_INTERVIEW_ASYNC_CODE: "true"
+      KAFKA_HR_INTERVIEW_TOPIC: chat.hr-interview.chat
+      KAFKA_HR_INTERVIEW_CONSUMER_GROUP: chat.hr-interview
+      CACHE_STORE: database
+    networks:
+      - laravel-network
+
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:15.1.0
+    container_name: hr-mailserver
+    hostname: mail.devpath.local
+    env_file: ./mail/mailserver.env
+    ports:
+      - "1025:25"
+      - "1143:143"
+      - "1587:587"
+      - "1993:993"
+    volumes:
+      - ./mail/data/mail-data/:/var/mail/
+      - ./mail/data/mail-state/:/var/mail-state/
+      - ./mail/data/mail-logs/:/var/log/mail/
+      - ./mail/data/config/:/tmp/docker-mailserver/
+    restart: unless-stopped
+    stop_grace_period: 1m
+    networks:
+      - laravel-network
+
+  webmail:
+    image: roundcube/roundcubemail:latest
+    container_name: hr-webmail
+    restart: unless-stopped
+    depends_on:
+      - mailserver
+    ports:
+      - "8083:80"
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: mailserver
+      ROUNDCUBEMAIL_DEFAULT_PORT: 143
+      ROUNDCUBEMAIL_SMTP_SERVER: mailserver
+      ROUNDCUBEMAIL_SMTP_PORT: 25
+    networks:
+      - laravel-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: hr-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "1"
+      MYSQL_DATABASE: laravel-hr
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_db_data:/var/lib/mysql
+    networks:
+      - laravel-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: hr-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - "8081:80"
+    networks:
+      - laravel-network
+
+  app_postgres:
+    image: postgres:15
+    container_name: app_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: laravel_devpath
+      POSTGRES_USER: laravel_user
+      POSTGRES_PASSWORD: "576183492"
+    ports:
+      - "5433:5432"
+    volumes:
+      - app_postgres_data:/var/lib/postgresql/data
+    networks:
+      - laravel-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: app_pgadmin
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - laravel-network
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    restart: unless-stopped
+    depends_on:
+      sonardb:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://sonardb:5432/sonar
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - laravel-network
+
+  sonardb:
+    image: postgres:15
+    container_name: sonardb
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonar
+    volumes:
+      - postgres_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - laravel-network
+
+  sonar-scanner:
+    image: sonarsource/sonar-scanner-cli:latest
+    container_name: hr-scanner
+    restart: unless-stopped
+    volumes:
+       - ./src/laravel/storage/app/sonar:/sonar
+    entrypoint: ["tail", "-f", "/dev/null"]
+    networks:
+      - laravel-network
+
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: laravel_kafka
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
+      KAFKA_LISTENERS: 'PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_LOG_FLUSH_INTERVAL_MESSAGES: 9223372036854775807
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_RETENTION_HOURS: 720
+    networks:
+      - laravel-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka_ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    depends_on:
+      - kafka
+    networks:
+      - laravel-network
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka-exporter
+    restart: unless-stopped
+    command:
+      - '--kafka.server=kafka:9092'
+    ports:
+      - "9308:9308"
+    depends_on:
+      - kafka
+    networks:
+      - laravel-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    depends_on:
+      - kafka-exporter
+    networks:
+      - laravel-network
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_HTTP_ADDR: 0.0.0.0
+      GF_SERVER_ROOT_URL: http://localhost:3001/
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    networks:
+      - laravel-network
+
+networks:
+  laravel-network:
+    driver: bridge
+
+volumes:
+  ollama_data:
+  open-webui_data:
+  mysql_db_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgres_db_data:
+  shared_code:
+  app_postgres_data:
+  pgadmin_data:
+  grafana_data:

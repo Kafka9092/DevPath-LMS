@@ -1,0 +1,16 @@
+name: "DevPath Adaptive Test Load"
+description: "Симуляция 10 пользователей, запускающих адаптивный тест"
+
+producers:
+  - name: "users"
+    count: 10
+    topic: "adaptive.test.start"
+    rate: 10
+    message:
+      template: |
+        {
+          "user_id": "load_user_{{ .Index }}",
+          "direction": "php",
+          "timestamp": {{ .Timestamp }},
+          "test_session_uuid": "load-{{ .UUID }}"
+        }

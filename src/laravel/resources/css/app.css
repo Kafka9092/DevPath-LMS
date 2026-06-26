@@ -1,0 +1,190 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../js/**/*.{js,jsx,ts,tsx}';
+
+@theme {
+    --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer base {
+    html,
+    body {
+        background-color: #ffffff;
+    }
+
+    html.dark,
+    html.dark body {
+        background-color: var(--color-gray-950);
+    }
+
+    button:not(:disabled),
+    input[type='button']:not(:disabled),
+    input[type='submit']:not(:disabled),
+    input[type='reset']:not(:disabled),
+    select:not(:disabled),
+    summary,
+    [role='button']:not([aria-disabled='true']) {
+        cursor: pointer;
+    }
+
+    button:disabled,
+    input:disabled,
+    select:disabled,
+    [role='button'][aria-disabled='true'] {
+        cursor: not-allowed;
+    }
+}
+
+
+@layer components {
+    .surface-elevated {
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.07),
+            0 -1px 4px rgba(15, 23, 42, 0.04),
+            0 2px 6px rgba(15, 23, 42, 0.06),
+            0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .dark .surface-elevated {
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .surface-header {
+        box-shadow:
+            0 1px 0 rgba(15, 23, 42, 0.04),
+            0 4px 16px rgba(15, 23, 42, 0.07);
+    }
+
+    .surface-control {
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.06),
+            0 1px 3px rgba(15, 23, 42, 0.07),
+            0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    .dark .surface-control {
+        box-shadow: none;
+    }
+
+    .dark .surface-header {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .course-card-elevated {
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.07),
+            0 -1px 4px rgba(15, 23, 42, 0.04),
+            0 2px 6px rgba(15, 23, 42, 0.06),
+            0 8px 22px rgba(15, 23, 42, 0.08);
+        transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .course-card-elevated:hover {
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.09),
+            0 -1px 6px rgba(15, 23, 42, 0.05),
+            0 4px 10px rgba(15, 23, 42, 0.08),
+            0 14px 32px rgba(15, 23, 42, 0.11);
+        transform: translateY(-2px);
+    }
+
+    .dark .course-card-elevated {
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .dark .course-card-elevated:hover {
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5);
+    }
+
+    .course-card-elevated-senior {
+        box-shadow:
+            0 0 0 1px rgba(124, 58, 237, 0.14),
+            0 -1px 4px rgba(124, 58, 237, 0.06),
+            0 2px 8px rgba(124, 58, 237, 0.1),
+            0 10px 26px rgba(124, 58, 237, 0.12);
+        transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .course-card-elevated-senior:hover {
+        box-shadow:
+            0 0 0 1px rgba(124, 58, 237, 0.2),
+            0 -1px 6px rgba(124, 58, 237, 0.08),
+            0 4px 12px rgba(124, 58, 237, 0.14),
+            0 16px 36px rgba(124, 58, 237, 0.16);
+        transform: translateY(-2px);
+    }
+
+    .dark .course-card-elevated-senior {
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.25);
+    }
+
+    .dark .shadow-violet-200,
+    .dark .shadow-violet-100,
+    .dark .shadow-orange-100 {
+        --tw-shadow-color: rgb(0 0 0 / 0.35);
+    }
+
+    button.bg-violet-600:not(:disabled):hover,
+    a.bg-violet-600:hover,
+    input.bg-violet-600:not(:disabled):hover,
+    button.bg-violet-600:enabled:hover,
+    a.bg-violet-600:enabled:hover,
+    button.bg-violet-700:not(:disabled):hover,
+    a.bg-violet-700:hover {
+        background-color: var(--color-orange-500) !important;
+    }
+
+    button.bg-violet-600:not(:disabled):active,
+    a.bg-violet-600:active,
+    input.bg-violet-600:not(:disabled):active,
+    button.bg-violet-700:not(:disabled):active,
+    a.bg-violet-700:active {
+        background-color: var(--color-orange-600) !important;
+    }
+
+    
+    button.border-violet-400:not(:disabled):hover,
+    button.bg-violet-50:not(:disabled):hover,
+    a.border-violet-200.bg-violet-50:hover,
+    a.bg-violet-50.border-violet-200:hover {
+        background-color: var(--color-orange-50) !important;
+        border-color: var(--color-orange-300) !important;
+        color: var(--color-orange-700) !important;
+    }
+
+    @keyframes loading-dot-pulse {
+        0%,
+        80%,
+        100% {
+            opacity: 0.28;
+            transform: scale(0.85);
+        }
+        40% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .loading-dots .loading-dot {
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border-radius: 9999px;
+        background-color: currentColor;
+        animation: loading-dot-pulse 1.2s ease-in-out infinite;
+    }
+
+    .loading-dots .loading-dot:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .loading-dots .loading-dot:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+}
